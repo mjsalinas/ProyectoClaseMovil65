@@ -1,28 +1,36 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import Home from "../screens/Home";
 import Login from "../screens/Login";
 import Register from "../screens/Register";
 import TabNavigator from "./TabsNavigator";
+import { useTheme } from "../contexts/ThemeContext";
 
-// 1. declarar tipado para las pantallas junto con sus parametros
 export type RootStackParamList = {
-    LoginScreen: undefined, 
-    // HomeScreen: {email: string}, 
-    RegisterScreen: undefined,
-    UserTabs: undefined,
-}
+  LoginScreen: undefined;
+  RegisterScreen: undefined;
+  UserTabs: undefined;
+};
 
-// 2. crear el stack navigator encargado de manejar la navegacion
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
-// 3. utilizamos el stack de navegacion  
-export default function StackNavigator(){
-    return(
-        <Stack.Navigator initialRouteName="LoginScreen" >
-            {/* <Stack.Screen name='HomeScreen' component={Home}/> */}
-            <Stack.Screen name="LoginScreen" component={Login}/>
-            <Stack.Screen name="RegisterScreen" component={Register}/>
-            <Stack.Screen name="UserTabs" component={TabNavigator}  />
-        </Stack.Navigator>
-    );
+export default function StackNavigator() {
+  const { colors } = useTheme();
+
+  return (
+    <Stack.Navigator
+      initialRouteName="LoginScreen"
+      screenOptions={{
+        headerStyle: { backgroundColor: colors.surface },
+        headerTintColor: colors.text,
+        contentStyle: { backgroundColor: colors.background },
+      }}
+    >
+      <Stack.Screen name="LoginScreen" component={Login} />
+      <Stack.Screen name="RegisterScreen" component={Register} />
+      <Stack.Screen
+        name="UserTabs"
+        component={TabNavigator}
+        options={{ headerShown: false }}
+      />
+    </Stack.Navigator>
+  );
 }

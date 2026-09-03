@@ -1,63 +1,89 @@
-import { View,Text } from "react-native";
+import { Text, ScrollView, StyleSheet } from "react-native";
 import CustomButton from "../components/CustomButton";
+import Card from "../components/Card";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { RootStackParamList } from "../navigation/StackNavigator";
-import { NativeBottomTabBarProps } from "@react-navigation/bottom-tabs/unstable";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { TabsParamList } from "../navigation/TabsNavigator";
 import { navigationRef } from "../navigation/NavigationService";
 import { CompositeScreenProps } from "@react-navigation/native";
 import { useAuth } from "../contexts/AuthContext";
-
-
+import { useTheme } from "../contexts/ThemeContext";
 
 type NestedFeedProps = CompositeScreenProps<
-    BottomTabScreenProps<TabsParamList, 'HomeTab'>,
-    NativeStackScreenProps<RootStackParamList>
->
+  BottomTabScreenProps<TabsParamList, "HomeTab">,
+  NativeStackScreenProps<RootStackParamList>
+>;
 
-export default function Home({route, navigation}: NestedFeedProps){
-    //destructuring 
-    // const {email} = route.params;
+export default function Home({ navigation }: NestedFeedProps) {
+  const { user } = useAuth();
+  const { colors } = useTheme();
 
-    //extrayendo objeto user del authContext por medio de hook useAuth
-    const {user} = useAuth();
+  const handleUserSettings = () => {
+    navigation.navigate("Profile");
+  };
 
-    const handleUserSettings = () =>{
-        navigation.navigate('Profile');
-    };
-    //reset de historial de navegacion
-    const handleLogout = () => {
-        if (navigationRef.isReady()){
-            navigationRef.reset({
-                //indice del arreglo de rutas, con el cual indicamos la vista seleccionada al momento de resetear el stack navegacion
-                index: 0,
-                //es un arreglo para cual cada objeto representa una ruta en el *nuevo historial del stack
-                routes: [{name:'LoginScreen'}],
-            })
-        }
-    };
-    //navegacion con historial activo
-    const handleNavigate= () =>{
-        navigation.navigate('LoginScreen');
-    };
-    return(
-       <View>
-        <Text>Hola {user?.email}, Bienvenido a Home</Text>
-        <CustomButton 
-            title="Ir a Preferencias de Usuario"
-            onPress={handleUserSettings}
-        />
-        <CustomButton 
-            title="Cerrar Sesion"
-            variant="secondary"
-            onPress={handleLogout}
-        />
-         <CustomButton 
-            title="Ir atras"
-            variant="secondary"
-            onPress={handleNavigate}
-        />
-       </View> 
-    )
-} 
+  const handleLogout = () => {
+    if (navigationRef.isReady()) {
+      navigationRef.reset({
+        index: 0,
+        routes: [{ name: "LoginScreen" }],
+      });
+    }
+  };
+
+  const handleNavigate = () => {
+    navigation.navigate("LoginScreen");
+  };
+
+  return (
+    <ScrollView
+      style={{ backgroundColor: colors.background }}
+      contentContainerStyle={styles.container}
+    >
+      <Text style={[styles.welcome, { color: colors.text }]}>
+        Hola {user?.email}, Bienvenido a Home
+      </Text>
+
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>
+        Variantes de Boton
+      </Text>
+
+      <CustomButton
+        title="Ir a Preferencias de Usuario"
+        onPress={handleUserSettings}
+        variant="primary"
+      />
+      <CustomButton
+        title="Cerrar Sesion"
+        variant="secondary"
+        onPress={handleLogout}
+      />
+      <CustomButton
+        title="Ir atras"
+        variant="tertiary"
+        onPress={handleNavigate}
+      />
+
+
+     
+    </ScrollView>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { padding: 24, paddingBottom: 40, alignItems: "center" },
+  welcome: {
+    fontSize: 18,
+    fontWeight: "600",
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    marginTop: 24,
+    marginBottom: 12,
+    alignSelf: "flex-start",
+  },
+});

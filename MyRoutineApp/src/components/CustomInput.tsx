@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { MaterialIcons, Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
+import { useTheme } from "../contexts/ThemeContext";
 
 type Props = {
   placeholder: string;
@@ -50,14 +51,24 @@ export default function CustomInput({
   };
 
   const error = getError();
-  
+  const { colors } = useTheme();
+
   return (
-    <View style = {styles.wrapper}>
-      <View style={styles.inputContainer}>
-        <MaterialIcons name={icon as any} size={22} />
+    <View style={styles.wrapper}>
+      <View
+        style={[
+          styles.inputContainer,
+          {
+            backgroundColor: colors.surface,
+            borderColor: colors.border,
+          },
+        ]}
+      >
+        <MaterialIcons name={icon as any} size={22} color={colors.textSecondary} />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { color: colors.text }]}
           placeholder={placeholder}
+          placeholderTextColor={colors.textSecondary}
           value={value}
           onChangeText={onChangeText}
           keyboardType={keyboardType}
@@ -69,11 +80,15 @@ export default function CustomInput({
               setIsSecureText(!isSecureText);
             }}
           >
-            <Ionicons name={isSecureText ? "eye" : "eye-off"} size={22} />
+            <Ionicons
+              name={isSecureText ? "eye" : "eye-off"}
+              size={22}
+              color={colors.textSecondary}
+            />
           </TouchableOpacity>
         )}
       </View>
-      <Text>{error}</Text>
+      <Text style={{ color: colors.primary }}>{error}</Text>
     </View>
   );
 }
@@ -89,8 +104,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#F4F6F8",
-    borderColor: "#9AA8B8",
     borderWidth: 1,
     borderRadius: 12,
     paddingLeft: 14,
@@ -101,7 +114,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: "#1A2B3D",
     fontSize: 15,
     paddingVertical: 10,
   },
