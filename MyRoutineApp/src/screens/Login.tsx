@@ -1,15 +1,24 @@
-import { View, Text, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
+} from "react-native";
 import CustomButton from "../components/CustomButton";
 import CustomInput from "../components/CustomInput";
 import { useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
 import { i18n } from "../contexts/LanguageContext";
 import { useTheme } from "../contexts/ThemeContext";
+import { useHeaderHeight } from "@react-navigation/elements";
 
 export default function Login({ navigation }: any) {
   const [correo, setCorreo] = useState("");
   const { login } = useAuth();
   const { colors } = useTheme();
+  const headerHeight = useHeaderHeight();
 
   const handleLogin = () => {
     const allowed = login(correo);
@@ -24,23 +33,33 @@ export default function Login({ navigation }: any) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.title, { color: colors.text }]}>
-        {i18n.t("welcomeLogin")}
-      </Text>
-      <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
-        Inicia sesión para continuar
-      </Text>
-      <View style={styles.form}>
-        <CustomInput
-          type="email"
-          placeholder={i18n.t("typeEmail")}
-          value={correo}
-          onChangeText={setCorreo}
-        />
-        <CustomButton title={i18n.t("signIn")} onPress={handleLogin} />
-      </View>
-    </View>
+    <KeyboardAvoidingView
+      style={{ flex: 1, backgroundColor: colors.background }}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={headerHeight}
+    >
+      <ScrollView
+        contentContainerStyle={styles.container}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+      >
+        <Text style={[styles.title, { color: colors.text }]}>
+          {i18n.t("welcomeLogin")}
+        </Text>
+        <Text style={[styles.subtitle, { color: colors.textSecondary }]}>
+          Inicia sesión para continuar
+        </Text>
+        <View style={styles.form}>
+          <CustomInput
+            type="email"
+            placeholder={i18n.t("typeEmail")}
+            value={correo}
+            onChangeText={setCorreo}
+          />
+          <CustomButton title={i18n.t("signIn")} onPress={handleLogin} />
+        </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
