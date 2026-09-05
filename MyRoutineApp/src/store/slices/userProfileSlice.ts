@@ -30,6 +30,21 @@ const userProfileSlice = createSlice({
         removeMedicalCondition: (state, action: PayloadAction<string>)=>{
             
         },
+        addTreatment: (state, action: PayloadAction<string>)=>{
 
+        },
+        removeTreatment: (state, action: PayloadAction<string>)=>{
+
+        },
     },
-})
+});
+
+export const {
+    updateProfile,
+    addMedicalCondition,
+    removeMedicalCondition,
+    addTreatment,
+    removeTreatment
+} = userProfileSlice.actions;
+
+export default userProfileSlice.reducer;
