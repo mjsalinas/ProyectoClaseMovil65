@@ -9,6 +9,9 @@ const lightColors = {
   border: "#E0E0E0",
   cardBackground: "#FFFFFF",
   cardBorder: "#E0E0E0",
+  secondary: "#5f0650",
+  inputBackground: "#f0f0f0",
+  buttonTertiaryText: "#1a1a1a",
 };
 
 const darkColors = {
@@ -20,6 +23,9 @@ const darkColors = {
   border: "#333333",
   cardBackground: "#2C2C2C",
   cardBorder: "#444444",
+  secondary: "#c466b8",
+  inputBackground: "#2a2a2a",
+  buttonTertiaryText: "#e0e0e0",
 };
 
 export type ThemeColors = typeof lightColors;
