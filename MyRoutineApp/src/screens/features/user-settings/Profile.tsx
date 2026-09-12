@@ -1,47 +1,56 @@
-import { View, StyleSheet, Text } from "react-native";
-import { useTheme } from "../../../contexts/ThemeContext";
+import { useState } from "react";
+import { View, Text, StyleSheet } from "react-native";
+import CustomInput from "../../../components/CustomInput";
+import CustomButton from "../../../components/CustomButton";
 import ScreenWrapper from "../../../components/ScreenWrapper";
 import SectionTitle from "../../../components/SectionTitle";
-import CustomInput from "../../../components/CustomInput";
-import { useEffect, useState } from "react";
-import { SKIN_TYPE_LABELS, SKIN_TYPES } from "../../../utils/types/Skincare";
 import TagChip from "../../../components/TagChip";
-import CustomButton from "../../../components/CustomButton";
+import { useAuth } from "../../../contexts/AuthContext";
+import { useTheme } from "../../../contexts/ThemeContext";
+import {
+  SkinType,
+  SKIN_TYPES,
+  SKIN_TYPE_LABELS,
+} from "../../../utils/types/Skincare";
 import { useAppDispatch, useAppSelector } from "../../../store/hooks";
 import {
   addMedicalCondition,
+  addTreatment,
   removeMedicalCondition,
+  removeTreatment,
   updateProfile,
 } from "../../../store/slices/userProfileSlice";
 
 export default function Profile() {
+  const { user } = useAuth();
   const dispatch = useAppDispatch();
-  const { colors } = useTheme();
   const userProfile = useAppSelector((state) => state.userProfile);
+  const { colors } = useTheme();
 
-  const [name, setName] = useState(userProfile.name ? userProfile.name : "");
-  const [age, setAge] = useState(userProfile.age ? userProfile.age : "");
-  const [skinType, setSkinType] = useState<string>(
-    userProfile.skinType ? userProfile.skinType : "",
+  const [name, setName] = useState(userProfile.name);
+  const [age, setAge] = useState(userProfile.age);
+  const [skinType, setSkinType] = useState<SkinType>(
+    (userProfile.skinType as SkinType) || "normal",
   );
   const [newCondition, setNewCondition] = useState("");
   const [newTreatment, setNewTreatment] = useState("");
-
-  useEffect(() => {
-    console.log("Informacion cargada desde Redux: ", userProfile);
-  }, []);
 
   const handleSave = () => {
     dispatch(updateProfile({ name, age, skinType }));
   };
 
-  const handleAddCondition = () =>{
+  const handleAddCondition = () => {
+    if (!newCondition.trim()) return;
     dispatch(addMedicalCondition(newCondition));
+    setNewCondition("");
   };
-  const handleOnRemoveCondition = () =>{
-    dispatch(removeMedicalCondition(newCondition));
-  }
-  
+
+  const handleAddTreatment = () => {
+    if (!newTreatment.trim()) return;
+    dispatch(addTreatment(newTreatment));
+    setNewTreatment("");
+  };
+
   return (
     <ScreenWrapper>
       <SectionTitle
@@ -56,10 +65,12 @@ export default function Profile() {
         ]}
       >
         <View style={[styles.avatar, { backgroundColor: colors.secondary }]}>
-          <Text style={styles.avatarText}>name</Text>
+          <Text style={styles.avatarText}>
+            {(userProfile.name || user?.email || "?").charAt(0).toUpperCase()}
+          </Text>
         </View>
         <Text style={[styles.email, { color: colors.buttonTertiaryText }]}>
-          email
+          {user?.email}
         </Text>
       </View>
 
@@ -75,33 +86,70 @@ export default function Profile() {
           <TagChip
             key={type}
             label={SKIN_TYPE_LABELS[type]}
-            onPress={() => setSkinType(type)}
             selected={skinType === type}
+            onPress={() => setSkinType(type)}
           />
         ))}
       </View>
-      <CustomButton title="Guardar Perfil" onPress={handleSave} />
+
+      <CustomButton title="Guardar perfil" onPress={handleSave} />
 
       <SectionTitle
-        title="Condiciones Medicas"
-        subtitle="Agrega tags con tus condiciones de piel"
+        title="Condiciones médicas"
+        subtitle="Agrega tags con tus condiciones de piel o salud"
       />
       <View style={styles.tagRow}>
         {userProfile.medicalConditions.map((condition) => (
           <TagChip
             key={condition}
             label={condition}
-            onRemove={handleOnRemoveCondition}
+            selected
+            onRemove={() => dispatch(removeMedicalCondition(condition))}
           />
         ))}
       </View>
-      <View>
-        <CustomInput
-          placeholder="Ej: Acne, Rosacea, etc"
-          value={newCondition}
-          onChangeText={setNewCondition}
+      <View style={styles.addRow}>
+        <View style={styles.addInput}>
+          <CustomInput
+            placeholder="Ej: Acné, Rosácea, Eczema..."
+            value={newCondition}
+            onChangeText={setNewCondition}
+          />
+        </View>
+        <CustomButton
+          title="Agregar"
+          onPress={handleAddCondition}
+          variant="secondary"
         />
-        <CustomButton title="Agregar" onPress={handleAddCondition} variant="secondary" />
+      </View>
+
+      <SectionTitle
+        title="Tratamientos dermatológicos"
+        subtitle="Registra tratamientos que estés recibiendo"
+      />
+      <View style={styles.tagRow}>
+        {userProfile.dermatologicalTreatments.map((treatment) => (
+          <TagChip
+            key={treatment}
+            label={treatment}
+            selected
+            onRemove={() => dispatch(removeTreatment(treatment))}
+          />
+        ))}
+      </View>
+      <View style={styles.addRow}>
+        <View style={styles.addInput}>
+          <CustomInput
+            placeholder="Ej: Retinol, Ácido glicólico..."
+            value={newTreatment}
+            onChangeText={setNewTreatment}
+          />
+        </View>
+        <CustomButton
+          title="Agregar"
+          onPress={handleAddTreatment}
+          variant="secondary"
+        />
       </View>
     </ScreenWrapper>
   );
