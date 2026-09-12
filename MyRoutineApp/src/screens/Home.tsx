@@ -1,89 +1,210 @@
-import { Text, ScrollView, StyleSheet } from "react-native";
-import CustomButton from "../components/CustomButton";
-import Card from "../components/Card";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { RootStackParamList } from "../navigation/StackNavigator";
-import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { TabsParamList } from "../navigation/TabsNavigator";
-import { navigationRef } from "../navigation/NavigationService";
-import { CompositeScreenProps } from "@react-navigation/native";
+import { View, Text, StyleSheet } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import ScreenWrapper from "../components/ScreenWrapper";
+import SectionTitle from "../components/SectionTitle";
+import StarRating from "../components/StarRating";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
+import { useSkincare } from "../contexts/SkincareContext";
+import { i18n } from "../contexts/LanguageContext";
+import { CATEGORY_LABELS } from "../utils/types/Skincare";
+import { useAppSelector } from "../store/hooks";
 
-type NestedFeedProps = CompositeScreenProps<
-  BottomTabScreenProps<TabsParamList, "HomeTab">,
-  NativeStackScreenProps<RootStackParamList>
->;
+type RoutinePreviewProps = {
+  title: string;
+  icon: keyof typeof Ionicons.glyphMap;
+  productIds: string[];
+};
 
-export default function Home({ navigation }: NestedFeedProps) {
+function RoutinePreview({ title, icon, productIds }: RoutinePreviewProps) {
+  const { products } = useSkincare();
+  const { colors } = useTheme();
+
+  const routineProducts = productIds
+    .map((id) => products.find((p) => p.id === id))
+    .filter(Boolean);
+
+  return (
+    <View
+      style={[styles.routineCard, { backgroundColor: colors.inputBackground }]}
+    >
+      <View style={styles.routineHeader}>
+        <Ionicons name={icon} size={20} color={colors.secondary} />
+        <Text style={[styles.routineTitle, { color: colors.primary }]}>
+          {title}
+        </Text>
+      </View>
+      {routineProducts.length === 0 ? (
+        <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
+          Sin productos asignados
+        </Text>
+      ) : (
+        routineProducts.map((product, index) => (
+          <View key={product!.id} style={styles.stepRow}>
+            <Text style={[styles.stepNum, { color: colors.secondary }]}>
+              {index + 1}.
+            </Text>
+            <View style={styles.stepContent}>
+              <Text
+                style={[styles.stepName, { color: colors.buttonTertiaryText }]}
+              >
+                {product!.name}
+              </Text>
+              <Text style={[styles.stepCat, { color: colors.textSecondary }]}>
+                {CATEGORY_LABELS[product!.category]}
+              </Text>
+            </View>
+            {product!.review && (
+              <StarRating rating={product!.review.rating} readonly size={14} />
+            )}
+          </View>
+        ))
+      )}
+    </View>
+  );
+}
+
+export default function Home() {
+  const { products } = useSkincare();
+  const profile = useAppSelector((state) => state.userProfile);
   const { user } = useAuth();
   const { colors } = useTheme();
 
-  const handleUserSettings = () => {
-    navigation.navigate("Profile");
-  };
+  const reviewedCount = products.filter((p) => p.review).length;
 
-  const handleLogout = () => {
-    if (navigationRef.isReady()) {
-      navigationRef.reset({
-        index: 0,
-        routes: [{ name: "LoginScreen" }],
-      });
-    }
-  };
-
-  const handleNavigate = () => {
-    navigation.navigate("LoginScreen");
-  };
+  // Al conectar Redux en Routines, estas listas pueden leerse del store.
+  const routine = { morning: [] as string[], night: [] as string[] };
 
   return (
-    <ScrollView
-      style={{ backgroundColor: colors.background }}
-      contentContainerStyle={styles.container}
-    >
-      <Text style={[styles.welcome, { color: colors.text }]}>
-        Hola {user?.email}, Bienvenido a Home
+    <ScreenWrapper>
+      <Text style={[styles.greeting, { color: colors.primary }]}>
+        {i18n.t("welcome")}, {profile.name || user?.email}
+      </Text>
+      <Text style={[styles.subGreeting, { color: colors.textSecondary }]}>
+        Tu rutina de skincare de hoy
       </Text>
 
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>
-        Variantes de Boton
-      </Text>
+      <View style={styles.statsRow}>
+        <View
+          style={[styles.stat, { backgroundColor: colors.inputBackground }]}
+        >
+          <Text style={[styles.statNum, { color: colors.secondary }]}>
+            {products.length}
+          </Text>
+          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+            Productos
+          </Text>
+        </View>
+        <View
+          style={[styles.stat, { backgroundColor: colors.inputBackground }]}
+        >
+          <Text style={[styles.statNum, { color: colors.secondary }]}>
+            {routine.morning.length + routine.night.length}
+          </Text>
+          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+            Pasos rutina
+          </Text>
+        </View>
+        <View
+          style={[styles.stat, { backgroundColor: colors.inputBackground }]}
+        >
+          <Text style={[styles.statNum, { color: colors.secondary }]}>
+            {reviewedCount}
+          </Text>
+          <Text style={[styles.statLabel, { color: colors.textSecondary }]}>
+            Reseñas
+          </Text>
+        </View>
+      </View>
 
-      <CustomButton
-        title="Ir a Preferencias de Usuario"
-        onPress={handleUserSettings}
-        variant="primary"
-      />
-      <CustomButton
-        title="Cerrar Sesion"
-        variant="secondary"
-        onPress={handleLogout}
-      />
-      <CustomButton
-        title="Ir atras"
-        variant="tertiary"
-        onPress={handleNavigate}
+      <SectionTitle title="Rutina de Mañana" />
+      <RoutinePreview
+        title="Mañana"
+        icon="sunny-outline"
+        productIds={routine.morning}
       />
 
-
-     
-    </ScrollView>
+      <SectionTitle title="Rutina de Noche" />
+      <RoutinePreview
+        title="Noche"
+        icon="moon-outline"
+        productIds={routine.night}
+      />
+    </ScreenWrapper>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 24, paddingBottom: 40, alignItems: "center" },
-  welcome: {
-    fontSize: 18,
-    fontWeight: "600",
-    textAlign: "center",
+  greeting: {
+    fontSize: 22,
+    fontWeight: "700",
+    marginBottom: 4,
+  },
+  subGreeting: {
+    fontSize: 14,
+    marginBottom: 16,
+  },
+  statsRow: {
+    flexDirection: "row",
+    gap: 10,
+    marginBottom: 16,
+  },
+  stat: {
+    flex: 1,
+    borderRadius: 9,
+    borderWidth: 1,
+    borderColor: "gray",
+    padding: 12,
+    alignItems: "center",
+  },
+  statNum: {
+    fontSize: 22,
+    fontWeight: "700",
+  },
+  statLabel: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+  routineCard: {
+    borderRadius: 9,
+    borderWidth: 1,
+    borderColor: "gray",
+    padding: 14,
     marginBottom: 8,
   },
-  sectionTitle: {
-    fontSize: 20,
+  routineHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 10,
+  },
+  routineTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  emptyText: {
+    fontSize: 13,
+    fontStyle: "italic",
+  },
+  stepRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+    gap: 6,
+  },
+  stepNum: {
+    fontSize: 14,
     fontWeight: "700",
-    marginTop: 24,
-    marginBottom: 12,
-    alignSelf: "flex-start",
+    width: 20,
+  },
+  stepContent: {
+    flex: 1,
+  },
+  stepName: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+  stepCat: {
+    fontSize: 11,
   },
 });
