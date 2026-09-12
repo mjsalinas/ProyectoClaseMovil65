@@ -1,18 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-
-type UserProfile = {
-    name: string;
-    age: string;
-    skinType: string;
-    medicalConditions: string[];
-    dermatologicalTreatments: string[];
-}
+import { UserProfile } from "../../utils/types/Skincare";
 
 const initialUserProfile: UserProfile = {
     name: "",
     age: "",
-    skinType: "",
+    skinType: "normal",
     medicalConditions: [],
     dermatologicalTreatments: [],
 };
