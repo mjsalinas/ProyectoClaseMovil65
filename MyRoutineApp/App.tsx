@@ -6,6 +6,7 @@ import { navigationRef } from "./src/navigation/NavigationService";
 import StackNavigator from "./src/navigation/StackNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
+import { SkincareProvider } from "./src/contexts/SkincareContext";
 import { store } from "./src/store";
 
 function AppNavigation() {
@@ -27,7 +28,9 @@ export default function App() {
       <ThemeProvider>
         <LanguageProvider>
           <AuthProvider>
-            <AppNavigation />
+            <SkincareProvider>
+              <AppNavigation />
+            </SkincareProvider>
           </AuthProvider>
         </LanguageProvider>
       </ThemeProvider>
