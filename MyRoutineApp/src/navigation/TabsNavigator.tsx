@@ -3,12 +3,16 @@ import { Ionicons } from "@expo/vector-icons";
 import Profile from "../screens/features/user-settings/Profile";
 import Settings from "../screens/features/user-settings/Settings";
 import Home from "../screens/Home";
+import Products from "../screens/Products";
+import Routines from "../screens/Routines";
 import { useTheme } from "../contexts/ThemeContext";
 
 export type TabsParamList = {
+  HomeTab: { email: string };
+  Products: undefined;
+  Routines: undefined;
   Profile: undefined;
   Settings: undefined;
-  HomeTab: { email: string };
 };
 
 const Tab = createBottomTabNavigator<TabsParamList>();
@@ -37,12 +41,31 @@ export default function TabNavigator() {
           ),
         }}
       />
-     
+      <Tab.Screen
+        name="Products"
+        component={Products}
+        options={{
+          title: "Productos",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="flask" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Routines"
+        component={Routines}
+        options={{
+          title: "Rutinas",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar" size={size} color={color} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Profile"
         component={Profile}
         options={{
-          title: "Perfil",
+          title: "Mi Perfil",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person" size={size} color={color} />
           ),
@@ -52,7 +75,7 @@ export default function TabNavigator() {
         name="Settings"
         component={Settings}
         options={{
-          title: "Configuracion",
+          title: "Configuración",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings" size={size} color={color} />
           ),

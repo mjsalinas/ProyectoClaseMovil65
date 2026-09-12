@@ -1,20 +1,39 @@
-export const translations ={
-    en: {
-        signIn: "Sign In",
-        typeEmail: "Type your email address",
-        invalidEmail: "Invalid email address",
-        welcomeLogin: "Welcome to Login",
-        clearLanguage: "Clear Language"
-    },
-    es: {
-        signIn: "Iniciar Sesion",
-        typeEmail: "Ingresa tu correo electronico",
-        invalidEmail: "Correo invalido",
-        welcomeLogin: "Bienvenido a Login",
-        clearLanguage: "Limpiar Idioma"
-    },
-
-    fr:{
-        welcomeLogin: "Bienvenu à Login"
-    }
+export const translations = {
+  en: {
+    signIn: "Sign In",
+    typeEmail: "Type your email address",
+    invalidEmail: "Invalid email address",
+    welcomeLogin: "Welcome to Login",
+    clearLanguage: "Clear Language",
+    welcome: "Welcome",
+    changeLanguage: "Change Language",
+    home: "Home",
+    products: "Products",
+    routines: "Routines",
+    profile: "My Profile",
+    settings: "Settings",
+    addProduct: "Add Product",
+    morningRoutine: "Morning Routine",
+    nightRoutine: "Night Routine",
+  },
+  es: {
+    signIn: "Iniciar Sesion",
+    typeEmail: "Ingresa tu correo electronico",
+    invalidEmail: "Correo invalido",
+    welcomeLogin: "Bienvenido a Login",
+    clearLanguage: "Limpiar Idioma",
+    welcome: "Hola",
+    changeLanguage: "Cambiar idioma",
+    home: "Inicio",
+    products: "Productos",
+    routines: "Rutinas",
+    profile: "Mi Perfil",
+    settings: "Configuración",
+    addProduct: "Agregar producto",
+    morningRoutine: "Rutina de Mañana",
+    nightRoutine: "Rutina de Noche",
+  },
+  fr: {
+    welcomeLogin: "Bienvenu à Login",
+  },
 };
