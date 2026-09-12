@@ -4,7 +4,7 @@ import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
 import { useTheme } from "../contexts/ThemeContext";
 
-export default function Register() {
+export default function Register({ navigation }: any) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -66,6 +66,12 @@ export default function Register() {
         title={"Registrarme"}
         onPress={handleRegister}
         disabled={isDisabled}
+      />
+
+      <CustomButton
+        title="Ya tengo cuenta"
+        onPress={() => navigation.navigate("LoginScreen")}
+        variant="secondary"
       />
 
       <Text style={{ color: colors.textSecondary }}>

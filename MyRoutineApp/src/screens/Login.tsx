@@ -57,6 +57,11 @@ export default function Login({ navigation }: any) {
             onChangeText={setCorreo}
           />
           <CustomButton title={i18n.t("signIn")} onPress={handleLogin} />
+          <CustomButton
+            title="Registrarme"
+            onPress={() => navigation.navigate("RegisterScreen")}
+            variant="secondary"
+          />
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
