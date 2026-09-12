@@ -21,7 +21,7 @@ const userProfileSlice = createSlice({
     name: "userProfile",
     initialState: initialUserProfile,
     reducers: {
-        updateProfile: (state, action: PayloadAction<UserProfile>) => {
+        updateProfile: (state, action: PayloadAction<Partial<UserProfile>>) => {
             Object.assign(state, action.payload);
         },
         //las modificaciones a las propiedades tipo arreglo, se hacen directamente al objeto [medicalConditions] en el estado
