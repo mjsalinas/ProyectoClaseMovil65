@@ -15,6 +15,7 @@ const { colors, isDark } = useTheme();
     <ScrollView
       style={[styles.container, { backgroundColor: colors.background }]}
       contentContainerStyle={styles.content}
+      keyboardShouldPersistTaps="handled"
     >
       {children}
     </ScrollView>
