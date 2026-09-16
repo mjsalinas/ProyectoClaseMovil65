@@ -5,7 +5,6 @@ import SectionTitle from "../components/SectionTitle";
 import StarRating from "../components/StarRating";
 import { useAuth } from "../contexts/AuthContext";
 import { useTheme } from "../contexts/ThemeContext";
-import { useSkincare } from "../contexts/SkincareContext";
 import { i18n } from "../contexts/LanguageContext";
 import { CATEGORY_LABELS } from "../utils/types/Skincare";
 import { useAppSelector } from "../store/hooks";
@@ -17,7 +16,7 @@ type RoutinePreviewProps = {
 };
 
 function RoutinePreview({ title, icon, productIds }: RoutinePreviewProps) {
-  const { products } = useSkincare();
+  const products = useAppSelector((state) => state.products);
   const { colors } = useTheme();
 
   const routineProducts = productIds
@@ -65,15 +64,13 @@ function RoutinePreview({ title, icon, productIds }: RoutinePreviewProps) {
 }
 
 export default function Home() {
-  const { products } = useSkincare();
+  const products = useAppSelector((state) => state.products);
+  const routine = useAppSelector((state) => state.routine);
   const profile = useAppSelector((state) => state.userProfile);
   const { user } = useAuth();
   const { colors } = useTheme();
 
   const reviewedCount = products.filter((p) => p.review).length;
-
-  // Al conectar Redux en Routines, estas listas pueden leerse del store.
-  const routine = { morning: [] as string[], night: [] as string[] };
 
   return (
     <ScreenWrapper>

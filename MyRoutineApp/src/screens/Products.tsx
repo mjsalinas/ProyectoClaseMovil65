@@ -10,7 +10,8 @@ import ScreenWrapper from "../components/ScreenWrapper";
 import SectionTitle from "../components/SectionTitle";
 import TagChip from "../components/TagChip";
 import { useTheme } from "../contexts/ThemeContext";
-import { useSkincare } from "../contexts/SkincareContext";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { addProduct } from "../store/slices/productsSlice";
 import { RootStackParamList } from "../navigation/StackNavigator";
 import { TabsParamList } from "../navigation/TabsNavigator";
 import {
@@ -25,7 +26,8 @@ type Props = CompositeScreenProps<
 >;
 
 export default function Products({ navigation }: Props) {
-  const { products, addProduct } = useSkincare();
+  const products = useAppSelector((state) => state.products);
+  const dispatch = useAppDispatch();
   const { colors } = useTheme();
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
@@ -34,7 +36,7 @@ export default function Products({ navigation }: Props) {
 
   const handleAddProduct = () => {
     if (!name.trim() || !brand.trim()) return;
-    addProduct({ name: name.trim(), brand: brand.trim(), category });
+    dispatch(addProduct({ name: name.trim(), brand: brand.trim(), category }));
     setName("");
     setBrand("");
     setCategory("cleanser");

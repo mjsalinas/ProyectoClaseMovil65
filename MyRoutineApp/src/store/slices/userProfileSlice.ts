@@ -33,7 +33,7 @@ const userProfileSlice = createSlice({
         addTreatment: (state, action: PayloadAction<string>) => {
             //aplicar validaciones de formato y de tipo de dato para agregar un elemento nuevo a un arreglo
             const trimmed = action.payload.trim();
-            if (!trimmed || state.medicalConditions.includes(trimmed)) return;
+            if (!trimmed || state.dermatologicalTreatments.includes(trimmed)) return;
             state.dermatologicalTreatments.push(trimmed);
         },
         removeTreatment: (state, action: PayloadAction<string>) => {
