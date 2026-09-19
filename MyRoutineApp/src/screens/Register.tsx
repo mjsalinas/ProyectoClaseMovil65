@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import CustomInput from "../components/CustomInput";
 import CustomButton from "../components/CustomButton";
 import { useTheme } from "../contexts/ThemeContext";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Register({ navigation }: any) {
   const [name, setName] = useState("");
@@ -12,11 +13,14 @@ export default function Register({ navigation }: any) {
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const { colors } = useTheme();
+  const {register} = useAuth();
 
-  const handleRegister = () => {
-    setAttempts(attempts + 1);
-    if (attempts === 3) {
-      setIsDisabled(true);
+  const handleRegister = async () => {
+    try {
+      await register(email, password);
+      navigation.navigate("LoginScreen");
+    }catch (error:any){
+      console.log("error al registrarse: ", error.message);
     }
   };
 

@@ -1,3 +1,4 @@
+import 'react-native-url-polyfill/auto';
 import { Provider } from "react-redux";
 import { AuthProvider } from "./src/contexts/AuthContext";
 import { LanguageProvider } from "./src/contexts/LanguageContext";
